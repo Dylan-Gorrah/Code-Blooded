@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeBlooded - Dashboard</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/cursor-effects.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+    <!-- Cursor elements -->
+    <div class="spotlight"></div>
+
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-left">
+            <div class="logo">
+                <span class="logo-text">CodeBlooded</span>
+            </div>
+            <div class="search-bar">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none">
+                    <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <input type="text" placeholder="Search projects, users, or tags..." id="search-input">
+            </div>
+        </div>
+        <div class="header-right">
+            <!-- Create Room Button -->
+            <button class="create-btn create-room-btn" id="create-room-btn">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M20 12V6H4V18H14M20 12L18 10M20 12L18 14M15 21V19M15 21H17M15 21H13M21 15H19M21 15V17M21 15V13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Create Room
+            </button>
+            
+            <button class="create-btn" id="create-btn">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Create Post
+            </button>
+            <button class="notif-btn" id="notif-btn">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M15 17H20L18.5951 15.5951C18.2141 15.2141 18 14.6973 18 14.1585V11C18 8.38757 16.3304 6.16509 14 5.34142V5C14 3.89543 13.1046 3 12 3C10.8954 3 10 3.89543 10 5V5.34142C7.66962 6.16509 6 8.38757 6 11V14.1585C6 14.6973 5.78595 15.2141 5.40493 15.5951L4 17H9M15 17V18C15 19.6569 13.6569 21 12 21C10.3431 21 9 19.6569 9 18V17M15 17H9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span class="notif-badge" id="notif-badge">3</span>
+            </button>
+            <div class="profile-dropdown">
+                <button class="profile-btn" id="profile-btn">
+                    <div class="avatar" id="user-avatar">D</div>
+                </button>
+                <div class="dropdown-menu" id="profile-menu">
+                    <div class="dropdown-header">
+                        <div class="avatar-large">D</div>
+                        <div>
+                            <div class="dropdown-username" id="dropdown-username">User</div>
+                            <div class="dropdown-email" id="dropdown-email">user@example.com</div>
+                        </div>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <a href="profile.html" class="dropdown-item">My Profile</a>
+                    <a href="#" class="dropdown-item">Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item logout-item" id="logout-btn">Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="dashboard-container">
+        <!-- Left Sidebar -->
+        <aside class="left-sidebar">
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-view="feed">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Home
+                </a>
+                <a href="#" class="nav-item" data-view="my-projects">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M7 8H17M7 12H17M7 16H12M3 5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    My Projects
+                </a>
+                <a href="#" class="nav-item" data-view="rooms">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M20 12V6H4V18H14M20 12L18 10M20 12L18 14M15 21V19M15 21H17M15 21H13M21 15H19M21 15V17M21 15V13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Rooms
+                </a>
+                <a href="#" class="nav-item" data-view="leaderboard">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M9 3V15M9 15L12 18L15 15M9 15H15M15 15V3M3 21H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Leaderboard
+                </a>
+                <a href="profile.html" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    My Profile
+                </a>
+                <a href="#" class="nav-item" data-view="notifications">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M15 17H20L18.5951 15.5951C18.2141 15.2141 18 14.6973 18 14.1585V11C18 8.38757 16.3304 6.16509 14 5.34142V5C14 3.89543 13.1046 3 12 3C10.8954 3 10 3.89543 10 5V5.34142C7.66962 6.16509 6 8.38757 6 11V14.1585C6 14.6973 5.78595 15.2141 5.40493 15.5951L4 17H9M15 17V18C15 19.6569 13.6569 21 12 21C10.3431 21 9 19.6569 9 18V17M15 17H9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Notifications
+                    <span class="nav-badge">3</span>
+                </a>
+            </nav>
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Trending Tags</h3>
+                <div class="tag-list">
+                    <span class="tag-pill">JavaScript</span>
+                    <span class="tag-pill">React</span>
+                    <span class="tag-pill">Python</span>
+                    <span class="tag-pill">Machine Learning</span>
+                    <span class="tag-pill">Web3</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Feed -->
+        <main class="main-feed">
+            <div class="feed-header">
+                <div class="feed-tabs">
+                    <button class="feed-tab active" data-filter="recent">Recent</button>
+                    <button class="feed-tab" data-filter="trending">Trending</button>
+                    <button class="feed-tab" data-filter="following">Following</button>
+                </div>
+                <select class="feed-sort">
+                    <option value="newest">Newest First</option>
+                    <option value="popular">Most Popular</option>
+                    <option value="stars">Highest Rated</option>
+                </select>
+            </div>
+
+            <!-- Posts/Rooms Container -->
+            <div class="posts-container" id="posts-container">
+                <!-- Loading state -->
+                <div class="loading-state">
+                    <div class="loader-spinner"></div>
+                    <p>Loading projects...</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="right-sidebar">
+            <div class="sidebar-card">
+                <h3 class="card-title">Top Contributors</h3>
+                <div class="top-users-list">
+                    <!-- Will be populated by JS -->
+                </div>
+            </div>
+            <div class="sidebar-card">
+                <h3 class="card-title">Your Stats</h3>
+                <div class="user-stats">
+                    <div class="stat-item">
+                        <span class="stat-value" id="user-clout">0</span>
+                        <span class="stat-label">Total Clout</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="user-projects">0</span>
+                        <span class="stat-label">Projects</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="user-rank">#--</span>
+                        <span class="stat-label">Rank</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Create Post Modal -->
+    <div class="modal" id="create-modal">
+        <div class="modal-overlay" id="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Post</h2>
+                <button class="modal-close" id="modal-close">×</button>
+            </div>
+            <form class="create-form" id="create-form">
+                <div class="form-group">
+                    <label>Post Type</label>
+                    <div class="post-type-selector">
+                        <button type="button" class="type-btn active" data-type="project">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M10 20L14 4M18 8L22 12L18 16M6 16L2 12L6 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            Project
+                        </button>
+                        <button type="button" class="type-btn" data-type="idea">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M9.663 17H12.5L14 19.5M12 3V4M5.5 5.5L7 7M3 12H4M20 12H21M17 7L18.5 5.5M12 21C8.13401 21 5 17.866 5 14C5 10.134 8.13401 7 12 7C15.866 7 19 10.134 19 14C19 15.0927 18.729 16.1227 18.2472 17.0251" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            Idea
+                        </button>
+                    </div>
+                </div>
+                <input type="hidden" id="post-type" value="project">
+                <div class="input-group">
+                    <input type="text" id="post-title" class="auth-input" placeholder=" " required>
+                    <label for="post-title" class="auth-label">Title</label>
+                </div>
+                <div class="input-group">
+                    <textarea id="post-description" class="auth-input" rows="4" placeholder=" " required></textarea>
+                    <label for="post-description" class="auth-label">Description</label>
+                </div>
+                <div class="input-group">
+                    <input type="url" id="post-github" class="auth-input" placeholder=" ">
+                    <label for="post-github" class="auth-label">GitHub URL (Optional)</label>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="post-tags" class="auth-input" placeholder=" ">
+                    <label for="post-tags" class="auth-label">Tags (comma-separated)</label>
+                </div>
+                <button type="submit" class="auth-button">
+                    <span class="button-text">Submit Post</span>
+                    <div class="button-loader loader-spinner" style="display: none;"></div>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create Room Modal -->
+    <div class="modal" id="create-room-modal">
+        <div class="modal-overlay" id="room-modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Room</h2>
+                <button class="modal-close" id="room-modal-close">×</button>
+            </div>
+            <form class="create-form" id="create-room-form">
+                <!-- Room Name -->
+                <div class="input-group">
+                    <input type="text" id="room-name" class="auth-input" placeholder=" " required maxlength="50">
+                    <label for="room-name" class="auth-label">Room Name</label>
+                    <div class="char-counter"><span id="room-name-count">0</span>/50</div>
+                </div>
+
+                <!-- Description -->
+                <div class="input-group">
+                    <textarea id="room-description" class="auth-input" rows="3" placeholder=" "></textarea>
+                    <label for="room-description" class="auth-label">Description (Optional)</label>
+                </div>
+
+                <!-- Room Type -->
+                <div class="form-group">
+                    <label>Room Type</label>
+                    <div class="room-type-selector">
+                        <label class="radio-option">
+                            <input type="radio" name="room-type" value="public" checked>
+                            <div class="radio-content">
+                                <div class="radio-header">
+                                    <span class="radio-label">Public</span>
+                                    <span class="radio-badge">Anyone can join</span>
+                                </div>
+                                <p class="radio-description">Visible to everyone, open for anyone to join</p>
+                            </div>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="room-type" value="private">
+                            <div class="radio-content">
+                                <div class="radio-header">
+                                    <span class="radio-label">Private</span>
+                                    <span class="private-indicator">🔒</span>
+                                </div>
+                                <p class="radio-description">Only people with the shareable code can join</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Shareable Code (only for private rooms) -->
+                <div class="form-group shareable-code-group" id="shareable-code-group" style="display: none;">
+                    <div class="form-group-header">
+                        <label>Shareable Code</label>
+                        <button type="button" class="regenerate-btn" id="regenerate-code">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M4 4V9H4.58152M19.9381 11C19.446 7.05369 16.0796 4 12 4C8.64262 4 5.76829 6.06817 4.58152 9M4.58152 9H9M20 20V15H19.4185M19.4185 15C18.2317 17.9318 15.3574 20 12 20C7.92038 20 4.55399 16.9463 4.06189 13M19.4185 15H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Regenerate
+                        </button>
+                    </div>
+                    <div class="code-display">
+                        <input type="text" id="shareable-code" class="auth-input" readonly>
+                        <div class="code-tooltip">Share this code with people you want to invite</div>
+                    </div>
+                </div>
+
+                <!-- Tags -->
+                <div class="input-group">
+                    <input type="text" id="room-tags" class="auth-input" placeholder=" ">
+                    <label for="room-tags" class="auth-label">Tags (comma-separated)</label>
+                </div>
+
+                <!-- Room Rules -->
+                <div class="form-group">
+                    <label>Room Rules & Permissions</label>
+                    <div class="rules-list">
+                        <label class="rule-option">
+                            <input type="checkbox" id="allow-invites">
+                            <span class="checkmark"></span>
+                            <span class="rule-label">Allow members to invite others</span>
+                        </label>
+                        <label class="rule-option">
+                            <input type="checkbox" id="require-approval">
+                            <span class="checkmark"></span>
+                            <span class="rule-label">Require approval to join</span>
+                        </label>
+                        <label class="rule-option">
+                            <input type="checkbox" id="enable-voting" checked>
+                            <span class="checkmark"></span>
+                            <span class="rule-label">Enable post voting in this room</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-button">
+                    <span class="button-text">Create Room</span>
+                    <div class="button-loader loader-spinner" style="display: none;"></div>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="js/cursor-effects.js"></script>
+    <script src="js/clout-service.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

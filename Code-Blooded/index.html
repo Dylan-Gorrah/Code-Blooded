@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeBlooded - Where Code Meets Clout</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/landing.css">
+    <link rel="stylesheet" href="css/cursor-effects.css">
+</head>
+<body>
+    <!-- Cursor elements -->
+    <div class="cursor-dot" data-cursor-dot></div>
+    <div class="cursor-ring" data-cursor-ring></div>
+    <div class="spotlight"></div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-text">CodeBlooded</span>
+            </div>
+            <div class="nav-links">
+                <a href="#" class="nav-link">Trending</a>
+                <a href="#" class="nav-link">Leaderboard</a>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="profile.html" class="nav-link" id="profile-nav-link" style="display: none;">Profile</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <div class="split-layout">
+            <!-- Hero Section -->
+            <section class="hero-section">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        <span class="title-gradient">Where Code</span>
+                        <span class="title-gradient">Meets Clout</span>
+                    </h1>
+                    <p class="hero-description">
+                        Showcase your projects, earn recognition, and climb the ranks of the most passionate developers.
+                    </p>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <span class="stat-number">1,024</span>
+                            <span class="stat-label">Active Developers</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">2,548</span>
+                            <span class="stat-label">Projects Shared</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">18,492</span>
+                            <span class="stat-label">Stars Earned</span>
+                        </div>
+                    </div>
+                    <button class="cta-button" id="cta-button">
+                        <span>Get Started</span>
+                        <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13.75 6.75L19.25 12L13.75 17.25" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M19 12H4.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Auth Section -->
+            <section class="auth-section">
+                <div class="auth-container">
+                    <!-- Login Form -->
+                    <form class="auth-form" id="login-form">
+                        <h2 class="auth-title">Welcome Back</h2>
+                        <div class="input-group">
+                            <input type="email" id="login-email" class="auth-input" placeholder=" " required>
+                            <label for="login-email" class="auth-label">Email</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="password" id="login-password" class="auth-input" placeholder=" " required>
+                            <label for="login-password" class="auth-label">Password</label>
+                        </div>
+                        <button type="submit" class="auth-button">
+                            <span class="button-text">Sign In</span>
+                            <div class="button-loader loader-spinner" style="display: none;"></div>
+                        </button>
+                        <p class="auth-switch">
+                            New to CodeBlooded? <a href="#" class="switch-link" data-form="register">Create an account</a>
+                        </p>
+                    </form>
+
+                    <!-- Register Form -->
+                    <form class="auth-form" id="register-form" style="display: none;">
+                        <h2 class="auth-title">Join the Revolution</h2>
+                        <div class="input-group">
+                            <input type="text" id="register-username" class="auth-input" placeholder=" " required minlength="3" maxlength="50">
+                            <label for="register-username" class="auth-label">Username</label>
+                            <div class="input-feedback"></div>
+                        </div>
+                        <div class="input-group">
+                            <input type="email" id="register-email" class="auth-input" placeholder=" " required>
+                            <label for="register-email" class="auth-label">Email</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="password" id="register-password" class="auth-input" placeholder=" " required minlength="6">
+                            <label for="register-password" class="auth-label">Password</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="url" id="register-github" class="auth-input" placeholder=" ">
+                            <label for="register-github" class="auth-label">GitHub Profile (Optional)</label>
+                        </div>
+                        <button type="submit" class="auth-button">
+                            <span class="button-text">Create Account</span>
+                            <div class="button-loader loader-spinner" style="display: none;"></div>
+                        </button>
+                        <p class="auth-switch">
+                            Already a member? <a href="#" class="switch-link" data-form="login">Sign in</a>
+                        </p>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="js/cursor-effects.js"></script>
+    <script src="js/clout-service.js"></script>
+    <script src="js/auth-handler.js"></script>
+    <script src="js/landing.js"></script>
+</body>
+</html>
