@@ -1,7 +1,7 @@
 // config.js - Add this to .gitignore
 const CONFIG = {
     SUPABASE_URL: 'GetYourOwn',
-    SUPABASE_ANON_KEY:GetYourOwn'
+    SUPABASE_ANON_KEY: 'GetYourOwn'
 };
 
 // Export for use in other files

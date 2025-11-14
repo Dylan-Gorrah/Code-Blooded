@@ -1,0 +1,102 @@
+/* Hide default cursor everywhere */
+* {
+    cursor: none !important;
+}
+
+/* Cursor Effects */
+.cursor-dot {
+    width: 8px;
+    height: 8px;
+    background: #c30b4e; /* Changed to pink */
+    border-radius: 50%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.3s ease;
+    opacity: 1;
+    box-shadow: 0 0 10px rgba(195, 11, 78, 0.5); /* Optional glow effect */
+}
+
+.cursor-ring {
+    width: 40px;
+    height: 40px;
+    border: 2px solid rgba(195, 11, 78, 0.5); /* Changed to pink with transparency */
+    border-radius: 50%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: all 0.15s ease;
+    opacity: 1;
+}
+
+.spotlight {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 50%, transparent 100px, rgba(0, 0, 0, 0.9) 200px);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Cursor states */
+.cursor-dot.hidden,
+.cursor-ring.hidden {
+    opacity: 0;
+}
+
+.spotlight.visible {
+    opacity: 1;
+}
+
+/* Click explosion effect */
+.cursor-ring.explode {
+    animation: explode 0.5s ease-out forwards;
+}
+
+@keyframes explode {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+        border-color: rgba(195, 11, 78, 0.5);
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(3);
+        opacity: 0;
+        border-color: rgba(195, 11, 78, 0);
+    }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .cursor-dot, .cursor-ring {
+        transition: none;
+    }
+    
+    .cursor-ring.explode {
+        animation: none;
+    }
+}
+
+/* Optional: If you want to keep the cursor hidden on pure touch devices (phones/tablets) but show on hybrid */
+@media (hover: none) and (pointer: coarse) {
+    /* Only hide if it's a small screen (likely mobile) */
+    @media (max-width: 768px) {
+        .cursor-dot, .cursor-ring, .spotlight {
+            display: none;
+        }
+        
+        * {
+            cursor: auto !important;
+        }
+    }
+}

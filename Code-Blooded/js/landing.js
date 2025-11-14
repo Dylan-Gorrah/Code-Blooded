@@ -13,6 +13,7 @@ class LandingPage {
         setTimeout(() => {
             this.authHandler = new AuthHandler();
             window.authHandler = this.authHandler; // Make it globally available
+            window.authHandlerInitialized = true; // Prevent duplicate initialization
         }, 100);
     }
 

@@ -1,0 +1,69 @@
+/* css/clout.css */
+.clout-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.clout-tier-novice {
+    background: rgba(100, 100, 100, 0.2);
+    color: #999;
+    border: 1px solid #666;
+}
+
+.clout-tier-contributor {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4CAF50;
+    border: 1px solid #4CAF50;
+}
+
+.clout-tier-influencer {
+    background: rgba(156, 39, 176, 0.2);
+    color: #9C27B0;
+    border: 1px solid #9C27B0;
+}
+
+.clout-tier-legend {
+    background: rgba(255, 193, 7, 0.2);
+    color: #FFC107;
+    border: 1px solid #FFC107;
+}
+
+.clout-score {
+    font-weight: 700;
+    color: #667eea;
+}
+
+.comment-like-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+}
+
+.comment-like-btn:hover {
+    background: var(--glass-bg);
+    color: #c30b4e;
+}
+
+.comment-like-btn.liked {
+    color: #c30b4e;
+}
+
+.comment-like-btn svg {
+    width: 14px;
+    height: 14px;
+}

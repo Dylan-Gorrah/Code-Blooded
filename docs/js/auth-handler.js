@@ -106,12 +106,7 @@ class AuthHandler {
 
         } catch (error) {
             console.error('Login error:', error);
-            const msg = (error && error.message) ? error.message : 'Login failed';
-            if (msg.toLowerCase().includes('email') && msg.toLowerCase().includes('confirm')) {
-                this.showError('Please confirm your email first. We sent you a confirmation link.');
-            } else {
-                this.showError(msg);
-            }
+            this.showError(error.message);
             // Reset button state on error
             buttonText.style.display = 'block';
             buttonLoader.style.display = 'none';
@@ -163,30 +158,18 @@ class AuthHandler {
             if (authError) throw authError;
 
             // Create profile
-            try {
-                const { error: profileError } = await supabase
-                    .from('profiles')
-                    .insert([
-                        {
-                            id: authData.user.id,
-                            username,
-                            email,
-                            github_url: githubUrl
-                        }
-                    ]);
-                if (profileError) {
-                    const msg = profileError.message ? profileError.message.toLowerCase() : '';
-                    // If profile already exists (e.g., DB trigger created it), ignore and continue
-                    if (msg.includes('duplicate') || msg.includes('already exists') || msg.includes('unique')) {
-                        // no-op
-                    } else {
-                        throw profileError;
+            const { error: profileError } = await supabase
+                .from('profiles')
+                .insert([
+                    {
+                        id: authData.user.id,
+                        username,
+                        email,
+                        github_url: githubUrl
                     }
-                }
-            } catch (profileErr) {
-                // Re-throw non-duplicate errors
-                throw profileErr;
-            }
+                ]);
+
+            if (profileError) throw profileError;
 
             // Initialize user clout
             const cloutService = new CloutService();

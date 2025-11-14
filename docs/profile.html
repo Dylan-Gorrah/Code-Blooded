@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - CodeBlooded</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/cursor-effects.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/profile.css">
+</head>
+<body>
+    <!-- Cursor elements -->
+    <div class="spotlight"></div>
+
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-left">
+            <div class="logo">
+                <span class="logo-text">CodeBlooded</span>
+            </div>
+            <div class="search-bar">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none">
+                    <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <input type="text" placeholder="Search projects, users, or tags..." id="search-input">
+            </div>
+        </div>
+        <div class="header-right">
+            <!-- Same as dashboard header -->
+        </div>
+    </header>
+
+    <!-- Profile Layout -->
+    <div class="dashboard-container">
+        <!-- Left Sidebar -->
+        <aside class="left-sidebar">
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="profile.html" class="nav-item active">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    My Profile
+                </a>
+                <!-- Other nav items -->
+            </nav>
+        </aside>
+
+        <!-- Main Profile Content -->
+        <main class="profile-main">
+            <!-- Profile Header -->
+            <div class="profile-header glass">
+                <div class="profile-avatar-section">
+                    <div class="profile-avatar">
+                        <div class="avatar-xxl" id="profile-avatar">D</div>
+                        <div class="online-status"></div>
+                    </div>
+                    <div class="profile-actions">
+                        <button class="edit-profile-btn" id="edit-profile-btn">Edit Profile</button>
+                        <div class="social-links">
+                            <a href="#" class="social-link" id="github-link" target="_blank">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385c.6.105.825-.255.825-.57c0-.285-.015-1.23-.015-2.235c-3.015.555-3.795-.735-4.035-1.41c-.135-.345-.72-1.41-1.23-1.695c-.42-.225-1.02-.78-.015-.795c.945-.015 1.62.87 1.845 1.23c1.08 1.815 2.805 1.305 3.495.99c.105-.78.42-1.305.765-1.605c-2.67-.3-5.46-1.335-5.46-5.925c0-1.305.465-2.385 1.23-3.225c-.12-.3-.54-1.53.12-3.18c0 0 1.005-.315 3.3 1.23c.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23c.66 1.65.24 2.88.12 3.18c.765.84 1.23 1.905 1.23 3.225c0 4.605-2.805 5.625-5.475 5.925c.435.375.81 1.095.81 2.22c0 1.605-.015 2.895-.015 3.3c0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-info-section">
+                    <div class="profile-main-info">
+                        <h1 class="profile-display-name" id="profile-display-name">Dylan Gorrah</h1>
+                        <span class="profile-username" id="profile-username">@dylangorrah</span>
+                        <span class="profile-title" id="profile-title">Tech Sorcerer 🧙</span>
+                        <p class="profile-bio" id="profile-bio">Building the future of developer communities. Passionate about open source and AI.</p>
+                        <div class="profile-meta">
+                            <span class="profile-location" id="profile-location">San Francisco, CA</span>
+                            <span class="profile-join-date" id="profile-join-date">Joined January 2024</span>
+                        </div>
+                    </div>
+
+                    <div class="profile-stats-overview">
+                        <div class="profile-stat">
+                            <span class="stat-number" id="follower-count">1.2k</span>
+                            <span class="stat-label">Followers</span>
+                        </div>
+                        <div class="profile-stat">
+                            <span class="stat-number" id="following-count">347</span>
+                            <span class="stat-label">Following</span>
+                        </div>
+                        <div class="profile-stat">
+                            <span class="stat-number" id="project-count">24</span>
+                            <span class="stat-label">Projects</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card glass">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-main">
+                        <span class="stat-value" id="total-stars">1,247</span>
+                        <span class="stat-label">Total Stars</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card glass">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-main">
+                        <span class="stat-value" id="clout-score">5,842</span>
+                        <span class="stat-label">Clout Points</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card glass">
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-main">
+                        <span class="stat-value" id="global-rank">#12</span>
+                        <span class="stat-label">Global Rank</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card glass">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-main">
+                        <span class="stat-value" id="projects-count">47</span>
+                        <span class="stat-label">Projects</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card glass">
+                    <div class="stat-icon">🔥</div>
+                    <div class="stat-main">
+                        <span class="stat-value" id="streak-count">14</span>
+                        <span class="stat-label">Day Streak</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card glass">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-main">
+                        <span class="stat-value" id="badge-count">23/50</span>
+                        <span class="stat-label">Badges</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Tabs -->
+            <div class="profile-tabs-container">
+                <div class="profile-tabs">
+                    <button class="profile-tab active" data-tab="projects">My Projects</button>
+                    <button class="profile-tab" data-tab="ideas">My Ideas</button>
+                    <button class="profile-tab" data-tab="comments">Discussions</button>
+                    <button class="profile-tab" data-tab="saved">Saved</button>
+                    <button class="profile-tab" data-tab="achievements">Achievements</button>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="tab-content">
+                    <!-- Projects Tab -->
+                    <div class="tab-pane active" id="projects-tab">
+                        <div class="posts-container" id="user-posts-container">
+                            <!-- User's projects will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Ideas Tab -->
+                    <div class="tab-pane" id="ideas-tab">
+                        <div class="posts-container" id="user-ideas-container">
+                            <!-- User's ideas will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Discussions Tab -->
+                    <div class="tab-pane" id="comments-tab">
+                        <div class="comments-container" id="user-comments-container">
+                            <!-- User's comments will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Saved Tab -->
+                    <div class="tab-pane" id="saved-tab">
+                        <div class="saved-container" id="user-saved-container">
+                            <!-- Saved items will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Achievements Tab -->
+                    <div class="tab-pane" id="achievements-tab">
+                        <div class="achievements-container">
+                            <div class="achievements-grid" id="badges-container">
+                                <!-- Badges will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="right-sidebar">
+            <div class="sidebar-card">
+                <h3 class="card-title">Tech Stack</h3>
+                <div class="tech-stack-tags" id="tech-stack-tags">
+                    <!-- Tech tags will be loaded here -->
+                </div>
+            </div>
+            <div class="sidebar-card">
+                <h3 class="card-title">Availability</h3>
+                <div class="availability-status" id="availability-status">
+                    <!-- Availability status will be loaded here -->
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal" id="edit-profile-modal">
+        <div class="modal-overlay" id="edit-modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Profile</h2>
+                <button class="modal-close" id="edit-modal-close">×</button>
+            </div>
+            <form class="edit-profile-form" id="edit-profile-form">
+                <div class="form-section">
+                    <label>Display Name</label>
+                    <input type="text" id="edit-display-name" class="auth-input" placeholder="Your display name">
+                </div>
+
+                <div class="form-section">
+                    <label>Bio</label>
+                    <textarea id="edit-bio" class="auth-input" rows="3" placeholder="Tell us about yourself..." maxlength="160"></textarea>
+                    <div class="char-count"><span id="bio-char-count">0</span>/160</div>
+                </div>
+
+                <div class="form-section">
+                    <label>Location</label>
+                    <input type="text" id="edit-location" class="auth-input" placeholder="Where are you based?">
+                </div>
+
+                <div class="form-section">
+                    <label>Links</label>
+                    <input type="url" id="edit-website" class="auth-input" placeholder="Your website">
+                    <input type="url" id="edit-github" class="auth-input" placeholder="GitHub profile">
+                    <input type="url" id="edit-twitter" class="auth-input" placeholder="Twitter profile">
+                </div>
+
+                <div class="form-section">
+                    <label>Tech Stack</label>
+                    <div class="tech-stack-input">
+                        <div class="selected-tech-tags" id="selected-tech-tags"></div>
+                        <input type="text" id="tech-input" class="auth-input" placeholder="Add technologies...">
+                        <div class="tech-suggestions" id="tech-suggestions"></div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <label>Specialty</label>
+                    <select id="edit-specialty" class="auth-input">
+                        <option value="full-stack">Full-Stack Developer</option>
+                        <option value="frontend">Frontend Developer</option>
+                        <option value="backend">Backend Developer</option>
+                        <option value="mobile">Mobile Developer</option>
+                        <option value="ai-ml">AI/ML Engineer</option>
+                        <option value="devops">DevOps Engineer</option>
+                        <option value="data-science">Data Scientist</option>
+                        <option value="game-dev">Game Developer</option>
+                    </select>
+                </div>
+
+                <div class="form-section">
+                    <label>Availability</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="edit-available-hire">
+                            <span class="checkmark"></span>
+                            Available for hire
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="edit-looking-collaborate">
+                            <span class="checkmark"></span>
+                            Open to collaborations
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" id="cancel-edit-btn">Cancel</button>
+                    <button type="submit" class="auth-button">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="js/cursor-effects.js"></script>
+    <script src="js/profile.js"></script>
+</body>
+</html>
