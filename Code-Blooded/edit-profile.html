@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - CodeBlooded</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/cursor-effects.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/profile.css">
+    <style>
+        .edit-profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .edit-header {
+            margin-bottom: 32px;
+        }
+
+        .edit-header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .edit-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .edit-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title svg {
+            width: 20px;
+            height: 20px;
+            opacity: 0.7;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .form-label .required {
+            color: var(--accent-red);
+            margin-left: 4px;
+        }
+
+        .form-label .hint {
+            font-weight: 400;
+            color: var(--text-secondary);
+            margin-left: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .username-lock {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .username-lock svg {
+            width: 16px;
+            height: 16px;
+            opacity: 0.5;
+        }
+
+        .username-lock .username {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .username-lock .lock-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-left: auto;
+        }
+
+        .tech-stack-container {
+            margin-top: 12px;
+        }
+
+        .selected-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+            min-height: 40px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+        }
+
+        .tech-tag-edit {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: var(--accent-primary);
+            color: white;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .tech-tag-edit button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+            line-height: 1;
+            padding: 0;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .tech-tag-edit button:hover {
+            opacity: 1;
+        }
+
+        .tag-counter {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        .tag-counter.limit-reached {
+            color: var(--accent-red);
+        }
+
+        .tech-suggestions-dropdown {
+            position: relative;
+        }
+
+        .suggestions-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            max-height: 240px;
+            overflow-y: auto;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            margin-top: 4px;
+            z-index: 100;
+            display: none;
+        }
+
+        .suggestions-list.show {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .suggestion-item.no-results {
+            cursor: default;
+            color: var(--text-secondary);
+        }
+
+        .suggestion-item.no-results:hover {
+            background: transparent;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--accent-primary);
+        }
+
+        .checkbox-item label {
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-save {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: var(--accent-primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-save:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .info-box {
+            padding: 12px 16px;
+            background: rgba(0, 183, 255, 0.1);
+            border: 1px solid rgba(0, 183, 255, 0.2);
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 12px;
+        }
+
+        .info-box svg {
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Cursor elements -->
+    <div class="spotlight"></div>
+
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-left">
+            <div class="logo">
+                <a href="dashboard.html" style="text-decoration: none; color: inherit;">
+                    <span class="logo-text">CodeBlooded</span>
+                </a>
+            </div>
+        </div>
+        <div class="header-right">
+            <a href="profile.html" class="btn-cancel" style="padding: 8px 16px; text-decoration: none; display: inline-block; border-radius: 6px;">
+                Back to Profile
+            </a>
+        </div>
+    </header>
+
+    <!-- Edit Profile Container -->
+    <div class="edit-profile-container">
+        <div class="edit-header">
+            <h1>Edit Profile</h1>
+            <p>Customize your public profile. Your username cannot be changed.</p>
+        </div>
+
+        <form id="edit-profile-form">
+            <!-- Username Section (Locked) -->
+            <div class="edit-section">
+                <div class="section-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Username
+                </div>
+                <div class="username-lock">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+                    </svg>
+                    <span class="username" id="username-display">@username</span>
+                    <span class="lock-text">Cannot be changed</span>
+                </div>
+                <div class="info-box">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                    </svg>
+                    Your username is permanent and used for your profile URL (u/username)
+                </div>
+            </div>
+
+            <!-- Basic Info -->
+            <div class="edit-section">
+                <div class="section-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    Basic Information
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Display Name</label>
+                    <input type="text" id="display-name" class="form-input" placeholder="How should we call you?" maxlength="50">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Bio
+                        <span class="hint">(160 characters max)</span>
+                    </label>
+                    <textarea id="bio" class="form-input form-textarea" placeholder="Tell the community about yourself..." maxlength="160"></textarea>
+                    <div class="char-counter"><span id="bio-count">0</span>/160</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Title</label>
+                    <input type="text" id="title" class="form-input" placeholder="e.g., Full-Stack Developer, Code Wizard" maxlength="50">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Location</label>
+                    <input type="text" id="location" class="form-input" placeholder="Where are you based?">
+                </div>
+            </div>
+
+            <!-- Tech Stack -->
+            <div class="edit-section">
+                <div class="section-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="16 18 22 12 16 6"></polyline>
+                        <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                    Tech Stack
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Your Technologies
+                        <span class="hint">(Max 15 tags)</span>
+                    </label>
+                    <div class="tech-stack-container">
+                        <div class="selected-tags" id="selected-tags">
+                            <!-- Tags appear here -->
+                        </div>
+                        <div class="tech-suggestions-dropdown">
+                            <input 
+                                type="text" 
+                                id="tech-search" 
+                                class="form-input" 
+                                placeholder="Search technologies (e.g., React, Python, Docker)..."
+                                autocomplete="off"
+                            >
+                            <div class="suggestions-list" id="suggestions-list">
+                                <!-- Suggestions appear here -->
+                            </div>
+                        </div>
+                        <div class="tag-counter" id="tag-counter">0/15 tags</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Specialty</label>
+                    <select id="specialty" class="form-input">
+                        <option value="">Select your specialty</option>
+                        <option value="full-stack">Full-Stack Developer</option>
+                        <option value="frontend">Frontend Developer</option>
+                        <option value="backend">Backend Developer</option>
+                        <option value="mobile">Mobile Developer</option>
+                        <option value="ai-ml">AI/ML Engineer</option>
+                        <option value="devops">DevOps Engineer</option>
+                        <option value="data-science">Data Scientist</option>
+                        <option value="game-dev">Game Developer</option>
+                        <option value="designer">UI/UX Designer</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Links -->
+            <div class="edit-section">
+                <div class="section-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                    </svg>
+                    Social Links
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Website</label>
+                    <input type="url" id="website" class="form-input" placeholder="https://yourwebsite.com">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">GitHub</label>
+                    <input type="url" id="github" class="form-input" placeholder="https://github.com/yourusername">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Twitter</label>
+                    <input type="url" id="twitter" class="form-input" placeholder="https://twitter.com/yourusername">
+                </div>
+            </div>
+
+            <!-- Availability -->
+            <div class="edit-section">
+                <div class="section-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    Availability
+                </div>
+
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="available-hire">
+                        <label for="available-hire">Available for hire</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="open-collab">
+                        <label for="open-collab">Open to collaborations</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button type="button" class="btn btn-cancel" onclick="window.location.href='profile.html'">
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-save" id="save-btn">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="js/cursor-effects.js"></script>
+    <script src="js/edit-profile.js"></script>
+</body>
+</html>

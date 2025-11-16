@@ -19,7 +19,10 @@ class LandingPage {
 
     async checkAuthStatus() {
         try {
-            const supabase = window.supabase.createClient(window.CONFIG.SUPABASE_URL, window.CONFIG.SUPABASE_ANON_KEY);
+            const supabase = window.supabaseClient || window.supabase.createClient(window.CONFIG.SUPABASE_URL, window.CONFIG.SUPABASE_ANON_KEY);
+            if (!window.supabaseClient) {
+                window.supabaseClient = supabase;
+            }
             const { data: { session } } = await supabase.auth.getSession();
             
             const profileLink = document.getElementById('profile-nav-link');

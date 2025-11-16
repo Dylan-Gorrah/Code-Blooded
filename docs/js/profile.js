@@ -449,25 +449,98 @@ class ProfilePage {
         const suggestions = document.getElementById('tech-suggestions');
         const selectedTags = document.getElementById('selected-tech-tags');
 
+        // Comprehensive tech stack list (150+ technologies)
         const commonTech = [
-            'JavaScript', 'TypeScript', 'Python', 'Java', 'C#', 'C++', 'PHP', 'Ruby', 'Go', 'Rust',
-            'React', 'Vue', 'Angular', 'Svelte', 'Next.js', 'Nuxt.js', 'Node.js', 'Express', 'Django',
-            'Flask', 'Spring', 'Laravel', 'Ruby on Rails', 'ASP.NET', 'React Native', 'Flutter',
-            'Swift', 'Kotlin', 'MySQL', 'PostgreSQL', 'MongoDB', 'Redis', 'Firebase', 'AWS', 'Docker',
-            'Kubernetes', 'TensorFlow', 'PyTorch', 'Machine Learning', 'AI', 'Blockchain', 'Web3'
-        ];
+            // Programming Languages
+            'JavaScript', 'TypeScript', 'Python', 'Java', 'C#', 'C++', 'C', 'PHP', 'Ruby', 'Go', 
+            'Rust', 'Swift', 'Kotlin', 'Scala', 'R', 'Dart', 'Elixir', 'Haskell', 'Perl', 'Lua',
+            'Objective-C', 'Shell', 'PowerShell', 'Assembly', 'COBOL', 'Fortran', 'Julia', 'Groovy',
+            
+            // Frontend Frameworks & Libraries
+            'React', 'Vue.js', 'Angular', 'Svelte', 'Next.js', 'Nuxt.js', 'Gatsby', 'Remix',
+            'Solid.js', 'Preact', 'Alpine.js', 'Ember.js', 'Backbone.js', 'jQuery', 'Lit',
+            
+            // Backend Frameworks
+            'Node.js', 'Express', 'Django', 'Flask', 'FastAPI', 'Spring Boot', 'Spring', 
+            'Laravel', 'Ruby on Rails', 'ASP.NET', 'ASP.NET Core', 'Nest.js', 'Koa', 'Hapi',
+            'Fastify', 'Phoenix', 'Gin', 'Echo', 'Fiber', 'Actix', 'Rocket',
+            
+            // Mobile Development
+            'React Native', 'Flutter', 'Ionic', 'Xamarin', 'SwiftUI', 'Jetpack Compose',
+            'Cordova', 'Capacitor', 'NativeScript',
+            
+            // Databases
+            'MySQL', 'PostgreSQL', 'MongoDB', 'Redis', 'SQLite', 'MariaDB', 'Oracle',
+            'Microsoft SQL Server', 'Cassandra', 'DynamoDB', 'CouchDB', 'Neo4j', 'Elasticsearch',
+            'Supabase', 'Firebase', 'PlanetScale', 'Cockroach DB', 'TimescaleDB',
+            
+            // Cloud & DevOps
+            'AWS', 'Azure', 'Google Cloud', 'Docker', 'Kubernetes', 'Jenkins', 'GitLab CI',
+            'GitHub Actions', 'CircleCI', 'Travis CI', 'Terraform', 'Ansible', 'Chef', 'Puppet',
+            'Vagrant', 'Heroku', 'Vercel', 'Netlify', 'DigitalOcean', 'Linode', 'Railway',
+            
+            // AI & Machine Learning
+            'TensorFlow', 'PyTorch', 'Keras', 'Scikit-learn', 'OpenCV', 'Pandas', 'NumPy',
+            'Machine Learning', 'Deep Learning', 'AI', 'NLP', 'Computer Vision', 'Hugging Face',
+            'LangChain', 'OpenAI', 'Stable Diffusion',
+            
+            // Web Technologies
+            'HTML', 'CSS', 'Sass', 'SCSS', 'Less', 'Tailwind CSS', 'Bootstrap', 'Material-UI',
+            'Chakra UI', 'Ant Design', 'Styled Components', 'Emotion', 'shadcn/ui',
+            
+            // Testing
+            'Jest', 'Mocha', 'Chai', 'Cypress', 'Selenium', 'Playwright', 'Puppeteer',
+            'Testing Library', 'Vitest', 'Jasmine', 'Karma', 'JUnit', 'PyTest',
+            
+            // State Management
+            'Redux', 'MobX', 'Zustand', 'Recoil', 'Jotai', 'XState', 'Vuex', 'Pinia',
+            
+            // Build Tools & Bundlers
+            'Webpack', 'Vite', 'Rollup', 'Parcel', 'esbuild', 'Turbopack', 'Babel', 'SWC',
+            
+            // Version Control & Collaboration
+            'Git', 'GitHub', 'GitLab', 'Bitbucket', 'SVN', 'Mercurial',
+            
+            // CMS & E-commerce
+            'WordPress', 'Drupal', 'Strapi', 'Contentful', 'Sanity', 'Shopify', 'WooCommerce',
+            'Magento', 'PrestaShop',
+            
+            // Game Development
+            'Unity', 'Unreal Engine', 'Godot', 'GameMaker', 'Phaser', 'Three.js', 'Babylon.js',
+            
+            // Blockchain & Web3
+            'Blockchain', 'Web3', 'Ethereum', 'Solidity', 'Smart Contracts', 'Hardhat', 'Truffle',
+            'Ethers.js', 'Web3.js', 'IPFS', 'Polygon', 'Solana',
+            
+            // Other Tools & Technologies
+            'GraphQL', 'REST API', 'gRPC', 'WebSockets', 'Socket.io', 'RabbitMQ', 'Kafka',
+            'Nginx', 'Apache', 'Linux', 'Ubuntu', 'Debian', 'CentOS', 'Arch Linux',
+            'VS Code', 'IntelliJ IDEA', 'PyCharm', 'WebStorm', 'Vim', 'Emacs',
+            'Figma', 'Adobe XD', 'Sketch', 'Photoshop', 'Illustrator', 'Blender'
+        ].sort(); // Sort alphabetically for easier browsing
+
+        const MAX_TAGS = 15;
 
         techInput.addEventListener('input', (e) => {
             const value = e.target.value.toLowerCase();
-            if (value.length < 2) {
+            const selectedTech = this.getSelectedTech();
+            
+            // Check if max tags reached
+            if (selectedTech.length >= MAX_TAGS) {
+                suggestions.innerHTML = `<div class="tech-limit-warning">Maximum ${MAX_TAGS} tags reached</div>`;
+                suggestions.style.display = 'block';
+                return;
+            }
+            
+            if (value.length < 1) {
                 suggestions.style.display = 'none';
                 return;
             }
 
             const filtered = commonTech.filter(tech => 
                 tech.toLowerCase().includes(value) &&
-                !this.getSelectedTech().includes(tech)
-            );
+                !selectedTech.includes(tech)
+            ).slice(0, 10); // Show max 10 suggestions
 
             if (filtered.length > 0) {
                 suggestions.innerHTML = filtered.map(tech => 
@@ -475,7 +548,8 @@ class ProfilePage {
                 ).join('');
                 suggestions.style.display = 'block';
             } else {
-                suggestions.style.display = 'none';
+                suggestions.innerHTML = '<div class="tech-no-results">No matching technologies found</div>';
+                suggestions.style.display = 'block';
             }
         });
 
@@ -491,10 +565,25 @@ class ProfilePage {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 const value = techInput.value.trim();
-                if (value && !this.getSelectedTech().includes(value)) {
-                    this.addTechTag(value);
+                const selectedTech = this.getSelectedTech();
+                
+                // Check if max tags reached
+                if (selectedTech.length >= MAX_TAGS) {
+                    this.showNotification(`Maximum ${MAX_TAGS} tags allowed`, 'warning');
+                    return;
+                }
+                
+                // Only allow from predefined list
+                const matchedTech = commonTech.find(tech => 
+                    tech.toLowerCase() === value.toLowerCase()
+                );
+                
+                if (matchedTech && !selectedTech.includes(matchedTech)) {
+                    this.addTechTag(matchedTech);
                     techInput.value = '';
                     suggestions.style.display = 'none';
+                } else if (value) {
+                    this.showNotification('Please select from the available technologies', 'info');
                 }
             } else if (e.key === 'Backspace' && techInput.value === '') {
                 const tags = this.getSelectedTech();
@@ -509,6 +598,9 @@ class ProfilePage {
                 suggestions.style.display = 'none';
             }
         });
+        
+        // Show count indicator
+        this.updateTagCount();
     }
 
     getSelectedTech() {
@@ -532,6 +624,7 @@ class ProfilePage {
         });
 
         tagsContainer.appendChild(tagElement);
+        this.updateTagCount();
     }
 
     removeTechTag(tech) {
@@ -540,6 +633,15 @@ class ProfilePage {
         if (tagElement) {
             tagElement.remove();
         }
+        this.updateTagCount();
+    }
+
+    updateTagCount() {
+        // Optional: Add visual indicator of tag count (can be styled in CSS)
+        const count = this.getSelectedTech().length;
+        const MAX_TAGS = 15;
+        // Could add a counter element in the HTML if desired
+        // For now, this is just a placeholder for future enhancement
     }
 
     populateTechStackInput() {

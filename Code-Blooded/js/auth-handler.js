@@ -2,8 +2,11 @@
 const SUPABASE_URL = window.CONFIG.SUPABASE_URL;
 const SUPABASE_ANON_KEY = window.CONFIG.SUPABASE_ANON_KEY;
 
-// Initialize Supabase client
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Initialize Supabase client (single shared instance)
+const supabase = window.supabaseClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+if (!window.supabaseClient) {
+    window.supabaseClient = supabase;
+}
 
 class AuthHandler {
     constructor() {
@@ -100,8 +103,18 @@ class AuthHandler {
             // Login successful
             this.currentUser = data.user;
             this.showSuccess('Login successful! Redirecting...');
-            
-            // Redirect immediately without delay to prevent any refresh issues
+
+            // Ensure session is persisted before redirect to avoid bouncing
+            try {
+                let attempts = 0;
+                while (attempts < 20) { // up to ~2s
+                    const { data: s } = await supabase.auth.getSession();
+                    if (s && s.session) break;
+                    await new Promise(r => setTimeout(r, 100));
+                    attempts++;
+                }
+            } catch (_) {}
+
             this.redirectToDashboard();
 
         } catch (error) {
@@ -162,38 +175,11 @@ class AuthHandler {
 
             if (authError) throw authError;
 
-            // Create profile
-            try {
-                const { error: profileError } = await supabase
-                    .from('profiles')
-                    .insert([
-                        {
-                            id: authData.user.id,
-                            username,
-                            email,
-                            github_url: githubUrl
-                        }
-                    ]);
-                if (profileError) {
-                    const msg = profileError.message ? profileError.message.toLowerCase() : '';
-                    // If profile already exists (e.g., DB trigger created it), ignore and continue
-                    if (msg.includes('duplicate') || msg.includes('already exists') || msg.includes('unique')) {
-                        // no-op
-                    } else {
-                        throw profileError;
-                    }
-                }
-            } catch (profileErr) {
-                // Re-throw non-duplicate errors
-                throw profileErr;
-            }
+            // Profile creation is handled by a DB trigger after signup.
+            // We skip client-side inserts to avoid RLS issues before session is active.
+            // Any initial clout awards should occur after login or via backend functions.
 
-            // Initialize user clout
-            const cloutService = new CloutService();
-            // User gets initial clout for signing up
-            await cloutService.awardClout(authData.user.id, 'post_created');
-
-            this.showSuccess('Account created successfully! Please check your email for verification.');
+            this.showSuccess('Register successful, confirm via email.');
             setTimeout(() => {
                 this.switchForm('login');
             }, 3000);
@@ -216,9 +202,13 @@ class AuthHandler {
                 .eq('username', username)
                 .single();
 
+            if (error) {
+                // Gracefully handle 404/406 or any transient errors
+                return true;
+            }
             return !data; // If no data, username is available
-        } catch (error) {
-            // If error, assume username is available (error likely means no record found)
+        } catch (err) {
+            // Treat unexpected errors as non-blocking for UX
             return true;
         }
     }

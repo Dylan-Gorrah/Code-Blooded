@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/cursor-effects.css">
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="css/profile-enhancements.css">
 </head>
 <body>
     <!-- Cursor elements -->
@@ -62,7 +63,7 @@
                         <div class="online-status"></div>
                     </div>
                     <div class="profile-actions">
-                        <button class="edit-profile-btn" id="edit-profile-btn">Edit Profile</button>
+                        <a href="edit-profile.html" class="edit-profile-btn" style="text-decoration: none; display: inline-block;">Edit Profile</a>
                         <div class="social-links">
                             <a href="#" class="social-link" id="github-link" target="_blank">
                                 <svg viewBox="0 0 24 24" fill="currentColor">
@@ -75,31 +76,62 @@
 
                 <div class="profile-info-section">
                     <div class="profile-main-info">
-                        <h1 class="profile-display-name" id="profile-display-name">Dylan Gorrah</h1>
-                        <span class="profile-username" id="profile-username">@dylangorrah</span>
-                        <span class="profile-title" id="profile-title">Tech Sorcerer 🧙</span>
-                        <p class="profile-bio" id="profile-bio">Building the future of developer communities. Passionate about open source and AI.</p>
+                        <h1 class="profile-display-name" id="profile-display-name">Loading...</h1>
+                        <div class="profile-username-row">
+                            <span class="profile-username" id="profile-username">@username</span>
+                            <span class="profile-u-username" id="profile-u-username">u/username</span>
+                            <button class="copy-profile-link" id="copy-profile-link" title="Copy profile link">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <span class="profile-title" id="profile-title"></span>
+                        
+                        <!-- Role Chips -->
+                        <div class="profile-chips" id="profile-chips">
+                            <!-- Chips will be loaded here -->
+                        </div>
+                        
+                        <!-- Badge Strip -->
+                        <div class="profile-badge-strip" id="profile-badge-strip">
+                            <!-- Top 3 badges will be loaded here -->
+                        </div>
+                        
+                        <p class="profile-bio" id="profile-bio"></p>
+                        
+                        <!-- Compact Social Row -->
+                        <div class="profile-social-row" id="profile-social-row">
+                            <!-- Social links will be loaded here -->
+                        </div>
+                        
                         <div class="profile-meta">
-                            <span class="profile-location" id="profile-location">San Francisco, CA</span>
-                            <span class="profile-join-date" id="profile-join-date">Joined January 2024</span>
+                            <span class="profile-location" id="profile-location">Location not set</span>
+                            <span class="profile-join-date" id="profile-join-date">Joined recently</span>
                         </div>
                     </div>
 
                     <div class="profile-stats-overview">
-                        <div class="profile-stat">
-                            <span class="stat-number" id="follower-count">1.2k</span>
+                        <div class="profile-stat clickable" id="followers-stat">
+                            <span class="stat-number" id="follower-count">0</span>
                             <span class="stat-label">Followers</span>
                         </div>
-                        <div class="profile-stat">
-                            <span class="stat-number" id="following-count">347</span>
+                        <div class="profile-stat clickable" id="following-stat">
+                            <span class="stat-number" id="following-count">0</span>
                             <span class="stat-label">Following</span>
                         </div>
                         <div class="profile-stat">
-                            <span class="stat-number" id="project-count">24</span>
+                            <span class="stat-number" id="project-count">0</span>
                             <span class="stat-label">Projects</span>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Featured Project -->
+            <div class="featured-project-section" id="featured-project-container">
+                <!-- Featured project will be loaded here -->
             </div>
 
             <!-- Stats Grid -->
@@ -107,7 +139,7 @@
                 <div class="stat-card glass">
                     <div class="stat-icon">⭐</div>
                     <div class="stat-main">
-                        <span class="stat-value" id="total-stars">1,247</span>
+                        <span class="stat-value" id="total-stars">0</span>
                         <span class="stat-label">Total Stars</span>
                     </div>
                 </div>
@@ -115,7 +147,7 @@
                 <div class="stat-card glass">
                     <div class="stat-icon">🎯</div>
                     <div class="stat-main">
-                        <span class="stat-value" id="clout-score">5,842</span>
+                        <span class="stat-value" id="clout-score">0</span>
                         <span class="stat-label">Clout Points</span>
                     </div>
                 </div>
@@ -123,7 +155,7 @@
                 <div class="stat-card glass">
                     <div class="stat-icon">🏆</div>
                     <div class="stat-main">
-                        <span class="stat-value" id="global-rank">#12</span>
+                        <span class="stat-value" id="global-rank">#--</span>
                         <span class="stat-label">Global Rank</span>
                     </div>
                 </div>
@@ -131,7 +163,7 @@
                 <div class="stat-card glass">
                     <div class="stat-icon">📊</div>
                     <div class="stat-main">
-                        <span class="stat-value" id="projects-count">47</span>
+                        <span class="stat-value" id="projects-count">0</span>
                         <span class="stat-label">Projects</span>
                     </div>
                 </div>
@@ -139,7 +171,7 @@
                 <div class="stat-card glass">
                     <div class="stat-icon">🔥</div>
                     <div class="stat-main">
-                        <span class="stat-value" id="streak-count">14</span>
+                        <span class="stat-value" id="streak-count">0</span>
                         <span class="stat-label">Day Streak</span>
                     </div>
                 </div>
@@ -147,7 +179,7 @@
                 <div class="stat-card glass">
                     <div class="stat-icon">✅</div>
                     <div class="stat-main">
-                        <span class="stat-value" id="badge-count">23/50</span>
+                        <span class="stat-value" id="badge-count">0/0</span>
                         <span class="stat-label">Badges</span>
                     </div>
                 </div>
@@ -167,6 +199,12 @@
                 <div class="tab-content">
                     <!-- Projects Tab -->
                     <div class="tab-pane active" id="projects-tab">
+                        <!-- Project Filters -->
+                        <div class="tab-filters">
+                            <button class="filter-btn active" data-filter="recent">Recent</button>
+                            <button class="filter-btn" data-filter="popular">Popular</button>
+                            <button class="filter-btn" data-filter="featured">Featured</button>
+                        </div>
                         <div class="posts-container" id="user-posts-container">
                             <!-- User's projects will be loaded here -->
                         </div>
@@ -301,9 +339,25 @@
         </div>
     </div>
 
+    <!-- Followers/Following Modal -->
+    <div class="modal" id="connections-modal">
+        <div class="modal-overlay" id="connections-modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="connections-modal-title">Followers</h2>
+                <button class="modal-close" id="connections-modal-close">×</button>
+            </div>
+            <div class="connections-list" id="connections-list">
+                <!-- Connections will be loaded here -->
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="config.js"></script>
     <script src="js/cursor-effects.js"></script>
+    <script src="js/badge-service.js"></script>
+    <script src="js/clout-service.js"></script>
     <script src="js/profile.js"></script>
 </body>
 </html>

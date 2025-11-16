@@ -1,5 +1,8 @@
 // Dashboard functionality
-const supabase = window.supabase.createClient(window.CONFIG.SUPABASE_URL, window.CONFIG.SUPABASE_ANON_KEY);
+const supabase = window.supabaseClient || window.supabase.createClient(window.CONFIG.SUPABASE_URL, window.CONFIG.SUPABASE_ANON_KEY);
+if (!window.supabaseClient) {
+    window.supabaseClient = supabase;
+}
 
 class Dashboard {
     constructor() {

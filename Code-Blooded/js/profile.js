@@ -6,6 +6,7 @@ class ProfilePage {
         this.badgeService = new BadgeService();
         this.cloutService = new CloutService();
         this.currentTab = 'projects';
+        this.projectSort = 'recent';
         this.init();
     }
 
@@ -14,6 +15,7 @@ class ProfilePage {
         await this.loadProfileData();
         this.setupEventListeners();
         this.setupEditProfileModal();
+        await this.loadFeaturedProject();
         await this.loadTabContent(this.currentTab);
     }
 
@@ -56,6 +58,11 @@ class ProfilePage {
             this.profileData.display_name || this.profileData.username;
         document.getElementById('profile-username').textContent = 
             `@${this.profileData.username}`;
+        document.getElementById('profile-u-username').textContent = 
+            `u/${this.profileData.username}`;
+        
+        // Setup copy profile link
+        this.setupCopyProfileLink();
         document.getElementById('profile-title').textContent = 
             this.profileData.title || 'Code Newbie';
         document.getElementById('profile-bio').textContent = 
@@ -88,6 +95,15 @@ class ProfilePage {
         
         // Availability
         this.updateAvailabilityUI();
+        
+        // Role chips
+        this.updateRoleChips();
+        
+        // Badge strip
+        this.loadBadgeStrip();
+        
+        // Compact social row
+        this.updateSocialRow();
     }
 
     async updateProfileStats() {
@@ -134,31 +150,6 @@ class ProfilePage {
         }
     }
 
-    updateTechStackUI() {
-        const container = document.getElementById('tech-stack-tags');
-        if (!container || !this.profileData.tech_stack) return;
-
-        container.innerHTML = this.profileData.tech_stack.map(tech => 
-            `<span class="tech-tag">${tech}</span>`
-        ).join('');
-    }
-
-    updateAvailabilityUI() {
-        const container = document.getElementById('availability-status');
-        if (!container) return;
-
-        container.innerHTML = `
-            <div class="status-item">
-                <div class="status-indicator ${this.profileData.available_for_hire ? 'status-available' : 'status-unavailable'}"></div>
-                <span>${this.profileData.available_for_hire ? 'Available for hire' : 'Not available for hire'}</span>
-            </div>
-            <div class="status-item">
-                <div class="status-indicator ${this.profileData.looking_to_collaborate ? 'status-available' : 'status-unavailable'}"></div>
-                <span>${this.profileData.looking_to_collaborate ? 'Open to collaborations' : 'Not open to collaborations'}</span>
-            </div>
-        `;
-    }
-
     setupEventListeners() {
         // Tab switching
         document.querySelectorAll('.profile-tab').forEach(tab => {
@@ -168,9 +159,30 @@ class ProfilePage {
             });
         });
 
-        // Edit profile button
-        document.getElementById('edit-profile-btn').addEventListener('click', () => {
-            this.openEditProfileModal();
+        // Project filters
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const filter = e.target.dataset.filter;
+                this.setProjectFilter(filter);
+            });
+        });
+
+        // Followers/Following stats
+        document.getElementById('followers-stat')?.addEventListener('click', () => {
+            this.openConnectionsModal('followers');
+        });
+
+        document.getElementById('following-stat')?.addEventListener('click', () => {
+            this.openConnectionsModal('following');
+        });
+
+        // Connections modal close
+        document.getElementById('connections-modal-close')?.addEventListener('click', () => {
+            this.closeConnectionsModal();
+        });
+
+        document.getElementById('connections-modal-overlay')?.addEventListener('click', () => {
+            this.closeConnectionsModal();
         });
     }
 
@@ -189,57 +201,23 @@ class ProfilePage {
         await this.loadTabContent(tabName);
     }
 
-    async loadTabContent(tabName) {
-        const containers = {
-            projects: 'user-posts-container',
-            ideas: 'user-ideas-container',
-            achievements: 'badges-container'
-        };
-
-        const containerId = containers[tabName];
-        if (!containerId) return;
-
-        const container = document.getElementById(containerId);
-        if (!container) return;
-
-        container.innerHTML = '<div class="loading-state"><div class="loader-spinner"></div><p>Loading...</p></div>';
-
-        try {
-            switch (tabName) {
-                case 'projects':
-                    await this.loadUserProjects(container);
-                    break;
-                case 'ideas':
-                    await this.loadUserIdeas(container);
-                    break;
-                case 'achievements':
-                    await this.loadUserBadges(container);
-                    break;
-                case 'comments':
-                    await this.loadUserComments(container);
-                    break;
-                case 'saved':
-                    await this.loadUserSaved(container);
-                    break;
-            }
-        } catch (error) {
-            console.error(`Error loading ${tabName}:`, error);
-            container.innerHTML = `
-                <div class="empty-state">
-                    <h3>Unable to load content</h3>
-                    <p>${error.message}</p>
-                </div>
-            `;
-        }
-    }
-
     async loadUserProjects(container) {
-        const { data: posts, error } = await supabase
+        let query = supabase
             .from('posts')
             .select('*')
             .eq('user_id', this.currentUser.id)
-            .eq('type', 'project')
-            .order('created_at', { ascending: false });
+            .eq('type', 'project');
+        
+        // Apply sorting based on filter
+        if (this.projectSort === 'popular') {
+            query = query.order('clout', { ascending: false });
+        } else if (this.projectSort === 'featured') {
+            query = query.order('clout', { ascending: false }).limit(1);
+        } else {
+            query = query.order('created_at', { ascending: false });
+        }
+        
+        const { data: posts, error } = await query;
 
         if (error) throw error;
 
@@ -257,87 +235,14 @@ class ProfilePage {
         container.innerHTML = posts.map(post => this.createPostCard(post)).join('');
     }
 
-    async loadUserIdeas(container) {
-        const { data: posts, error } = await supabase
-            .from('posts')
-            .select('*')
-            .eq('user_id', this.currentUser.id)
-            .eq('type', 'idea')
-            .order('created_at', { ascending: false });
-
-        if (error) throw error;
-
-        if (!posts || posts.length === 0) {
-            container.innerHTML = `
-                <div class="empty-state">
-                    <h3>No ideas yet</h3>
-                    <p>Share your first idea to inspire others!</p>
-                    <button class="cta-button" onclick="window.location.href='dashboard.html'">Share Idea</button>
-                </div>
-            `;
-            return;
-        }
-
-        container.innerHTML = posts.map(post => this.createPostCard(post)).join('');
-    }
-
-    async loadUserBadges(container) {
-        const badgesWithStatus = await this.badgeService.getAllBadgesWithUserStatus(this.currentUser.id);
-
-        if (!badgesWithStatus.length) {
-            container.innerHTML = `
-                <div class="empty-state">
-                    <h3>No badges yet</h3>
-                    <p>Start engaging with the community to earn badges!</p>
-                </div>
-            `;
-            return;
-        }
-
-        container.innerHTML = badgesWithStatus.map(badge => `
-            <div class="badge-item ${badge.unlocked ? '' : 'locked'}" 
-                 data-badge-id="${badge.id}"
-                 data-badge-tier="${badge.tier}">
-                <div class="badge-icon">${badge.icon}</div>
-                <div class="badge-name">${badge.name}</div>
-                <div class="badge-tier tier-${badge.tier}">${badge.tier}</div>
-                ${!badge.unlocked && badge.hidden ? `
-                    <div class="badge-description" style="display: none;">${badge.description}</div>
-                ` : `
-                    <div class="badge-description">${badge.description}</div>
-                `}
-            </div>
-        `).join('');
-
-        // Add click listeners to show hidden badge descriptions
-        container.querySelectorAll('.badge-item.locked').forEach(item => {
-            item.addEventListener('click', () => {
-                const description = item.querySelector('.badge-description');
-                if (description.style.display === 'none') {
-                    description.style.display = 'block';
-                } else {
-                    description.style.display = 'none';
-                }
-            });
-        });
-    }
-
-    async loadUserComments(container) {
-        // Implementation for loading user comments
-        container.innerHTML = `
-            <div class="empty-state">
-                <h3>Comments coming soon</h3>
-                <p>This feature will be available in the next update.</p>
-            </div>
-        `;
-    }
-
     async loadUserSaved(container) {
         // Implementation for loading saved items
         container.innerHTML = `
             <div class="empty-state">
-                <h3>Saved items coming soon</h3>
-                <p>This feature will be available in the next update.</p>
+                <div class="empty-state-icon">🔖</div>
+                <h3>No saved items yet</h3>
+                <p>You haven't saved anything yet. Star someone's project from the feed to save it here and come back to it later!</p>
+                <a href="dashboard.html" class="cta-button">Browse Projects</a>
             </div>
         `;
     }
@@ -449,25 +354,98 @@ class ProfilePage {
         const suggestions = document.getElementById('tech-suggestions');
         const selectedTags = document.getElementById('selected-tech-tags');
 
+        // Comprehensive tech stack list (150+ technologies)
         const commonTech = [
-            'JavaScript', 'TypeScript', 'Python', 'Java', 'C#', 'C++', 'PHP', 'Ruby', 'Go', 'Rust',
-            'React', 'Vue', 'Angular', 'Svelte', 'Next.js', 'Nuxt.js', 'Node.js', 'Express', 'Django',
-            'Flask', 'Spring', 'Laravel', 'Ruby on Rails', 'ASP.NET', 'React Native', 'Flutter',
-            'Swift', 'Kotlin', 'MySQL', 'PostgreSQL', 'MongoDB', 'Redis', 'Firebase', 'AWS', 'Docker',
-            'Kubernetes', 'TensorFlow', 'PyTorch', 'Machine Learning', 'AI', 'Blockchain', 'Web3'
-        ];
+            // Programming Languages
+            'JavaScript', 'TypeScript', 'Python', 'Java', 'C#', 'C++', 'C', 'PHP', 'Ruby', 'Go', 
+            'Rust', 'Swift', 'Kotlin', 'Scala', 'R', 'Dart', 'Elixir', 'Haskell', 'Perl', 'Lua',
+            'Objective-C', 'Shell', 'PowerShell', 'Assembly', 'COBOL', 'Fortran', 'Julia', 'Groovy',
+            
+            // Frontend Frameworks & Libraries
+            'React', 'Vue.js', 'Angular', 'Svelte', 'Next.js', 'Nuxt.js', 'Gatsby', 'Remix',
+            'Solid.js', 'Preact', 'Alpine.js', 'Ember.js', 'Backbone.js', 'jQuery', 'Lit',
+            
+            // Backend Frameworks
+            'Node.js', 'Express', 'Django', 'Flask', 'FastAPI', 'Spring Boot', 'Spring', 
+            'Laravel', 'Ruby on Rails', 'ASP.NET', 'ASP.NET Core', 'Nest.js', 'Koa', 'Hapi',
+            'Fastify', 'Phoenix', 'Gin', 'Echo', 'Fiber', 'Actix', 'Rocket',
+            
+            // Mobile Development
+            'React Native', 'Flutter', 'Ionic', 'Xamarin', 'SwiftUI', 'Jetpack Compose',
+            'Cordova', 'Capacitor', 'NativeScript',
+            
+            // Databases
+            'MySQL', 'PostgreSQL', 'MongoDB', 'Redis', 'SQLite', 'MariaDB', 'Oracle',
+            'Microsoft SQL Server', 'Cassandra', 'DynamoDB', 'CouchDB', 'Neo4j', 'Elasticsearch',
+            'Supabase', 'Firebase', 'PlanetScale', 'Cockroach DB', 'TimescaleDB',
+            
+            // Cloud & DevOps
+            'AWS', 'Azure', 'Google Cloud', 'Docker', 'Kubernetes', 'Jenkins', 'GitLab CI',
+            'GitHub Actions', 'CircleCI', 'Travis CI', 'Terraform', 'Ansible', 'Chef', 'Puppet',
+            'Vagrant', 'Heroku', 'Vercel', 'Netlify', 'DigitalOcean', 'Linode', 'Railway',
+            
+            // AI & Machine Learning
+            'TensorFlow', 'PyTorch', 'Keras', 'Scikit-learn', 'OpenCV', 'Pandas', 'NumPy',
+            'Machine Learning', 'Deep Learning', 'AI', 'NLP', 'Computer Vision', 'Hugging Face',
+            'LangChain', 'OpenAI', 'Stable Diffusion',
+            
+            // Web Technologies
+            'HTML', 'CSS', 'Sass', 'SCSS', 'Less', 'Tailwind CSS', 'Bootstrap', 'Material-UI',
+            'Chakra UI', 'Ant Design', 'Styled Components', 'Emotion', 'shadcn/ui',
+            
+            // Testing
+            'Jest', 'Mocha', 'Chai', 'Cypress', 'Selenium', 'Playwright', 'Puppeteer',
+            'Testing Library', 'Vitest', 'Jasmine', 'Karma', 'JUnit', 'PyTest',
+            
+            // State Management
+            'Redux', 'MobX', 'Zustand', 'Recoil', 'Jotai', 'XState', 'Vuex', 'Pinia',
+            
+            // Build Tools & Bundlers
+            'Webpack', 'Vite', 'Rollup', 'Parcel', 'esbuild', 'Turbopack', 'Babel', 'SWC',
+            
+            // Version Control & Collaboration
+            'Git', 'GitHub', 'GitLab', 'Bitbucket', 'SVN', 'Mercurial',
+            
+            // CMS & E-commerce
+            'WordPress', 'Drupal', 'Strapi', 'Contentful', 'Sanity', 'Shopify', 'WooCommerce',
+            'Magento', 'PrestaShop',
+            
+            // Game Development
+            'Unity', 'Unreal Engine', 'Godot', 'GameMaker', 'Phaser', 'Three.js', 'Babylon.js',
+            
+            // Blockchain & Web3
+            'Blockchain', 'Web3', 'Ethereum', 'Solidity', 'Smart Contracts', 'Hardhat', 'Truffle',
+            'Ethers.js', 'Web3.js', 'IPFS', 'Polygon', 'Solana',
+            
+            // Other Tools & Technologies
+            'GraphQL', 'REST API', 'gRPC', 'WebSockets', 'Socket.io', 'RabbitMQ', 'Kafka',
+            'Nginx', 'Apache', 'Linux', 'Ubuntu', 'Debian', 'CentOS', 'Arch Linux',
+            'VS Code', 'IntelliJ IDEA', 'PyCharm', 'WebStorm', 'Vim', 'Emacs',
+            'Figma', 'Adobe XD', 'Sketch', 'Photoshop', 'Illustrator', 'Blender'
+        ].sort(); // Sort alphabetically for easier browsing
+
+        const MAX_TAGS = 15;
 
         techInput.addEventListener('input', (e) => {
             const value = e.target.value.toLowerCase();
-            if (value.length < 2) {
+            const selectedTech = this.getSelectedTech();
+            
+            // Check if max tags reached
+            if (selectedTech.length >= MAX_TAGS) {
+                suggestions.innerHTML = `<div class="tech-limit-warning">Maximum ${MAX_TAGS} tags reached</div>`;
+                suggestions.style.display = 'block';
+                return;
+            }
+            
+            if (value.length < 1) {
                 suggestions.style.display = 'none';
                 return;
             }
 
             const filtered = commonTech.filter(tech => 
                 tech.toLowerCase().includes(value) &&
-                !this.getSelectedTech().includes(tech)
-            );
+                !selectedTech.includes(tech)
+            ).slice(0, 10); // Show max 10 suggestions
 
             if (filtered.length > 0) {
                 suggestions.innerHTML = filtered.map(tech => 
@@ -475,7 +453,8 @@ class ProfilePage {
                 ).join('');
                 suggestions.style.display = 'block';
             } else {
-                suggestions.style.display = 'none';
+                suggestions.innerHTML = '<div class="tech-no-results">No matching technologies found</div>';
+                suggestions.style.display = 'block';
             }
         });
 
@@ -491,10 +470,25 @@ class ProfilePage {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 const value = techInput.value.trim();
-                if (value && !this.getSelectedTech().includes(value)) {
-                    this.addTechTag(value);
+                const selectedTech = this.getSelectedTech();
+                
+                // Check if max tags reached
+                if (selectedTech.length >= MAX_TAGS) {
+                    this.showNotification(`Maximum ${MAX_TAGS} tags allowed`, 'warning');
+                    return;
+                }
+                
+                // Only allow from predefined list
+                const matchedTech = commonTech.find(tech => 
+                    tech.toLowerCase() === value.toLowerCase()
+                );
+                
+                if (matchedTech && !selectedTech.includes(matchedTech)) {
+                    this.addTechTag(matchedTech);
                     techInput.value = '';
                     suggestions.style.display = 'none';
+                } else if (value) {
+                    this.showNotification('Please select from the available technologies', 'info');
                 }
             } else if (e.key === 'Backspace' && techInput.value === '') {
                 const tags = this.getSelectedTech();
@@ -509,6 +503,9 @@ class ProfilePage {
                 suggestions.style.display = 'none';
             }
         });
+        
+        // Show count indicator
+        this.updateTagCount();
     }
 
     getSelectedTech() {
@@ -532,6 +529,7 @@ class ProfilePage {
         });
 
         tagsContainer.appendChild(tagElement);
+        this.updateTagCount();
     }
 
     removeTechTag(tech) {
@@ -540,6 +538,15 @@ class ProfilePage {
         if (tagElement) {
             tagElement.remove();
         }
+        this.updateTagCount();
+    }
+
+    updateTagCount() {
+        // Optional: Add visual indicator of tag count (can be styled in CSS)
+        const count = this.getSelectedTech().length;
+        const MAX_TAGS = 15;
+        // Could add a counter element in the HTML if desired
+        // For now, this is just a placeholder for future enhancement
     }
 
     populateTechStackInput() {
@@ -612,6 +619,401 @@ class ProfilePage {
         } finally {
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
+        }
+    }
+
+    // New Profile Enhancement Methods
+    setupCopyProfileLink() {
+        const copyBtn = document.getElementById('copy-profile-link');
+        if (!copyBtn) return;
+        
+        copyBtn.addEventListener('click', async () => {
+            const profileUrl = `${window.location.origin}/u/${this.profileData.username}`;
+            
+            try {
+                await navigator.clipboard.writeText(profileUrl);
+                this.showToast('Profile link copied!', 'success');
+            } catch (err) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = profileUrl;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                this.showToast('Profile link copied!', 'success');
+            }
+        });
+    }
+
+    updateRoleChips() {
+        const container = document.getElementById('profile-chips');
+        if (!container) return;
+        
+        const chips = [];
+        
+        // Add specialty chip
+        if (this.profileData.specialty) {
+            const specialtyMap = {
+                'full-stack': 'Full-Stack',
+                'frontend': 'Frontend',
+                'backend': 'Backend',
+                'mobile': 'Mobile',
+                'ai-ml': 'AI/ML',
+                'devops': 'DevOps',
+                'data-science': 'Data Science',
+                'game-dev': 'Game Dev'
+            };
+            chips.push(`<span class="profile-chip chip-specialty">${specialtyMap[this.profileData.specialty] || this.profileData.specialty}</span>`);
+        }
+        
+        // Add availability chips
+        if (this.profileData.available_for_hire) {
+            chips.push('<span class="profile-chip chip-hire">Available for hire</span>');
+        }
+        
+        if (this.profileData.looking_to_collaborate) {
+            chips.push('<span class="profile-chip chip-collab">Open to collab</span>');
+        }
+        
+        container.innerHTML = chips.join('');
+    }
+
+    async loadBadgeStrip() {
+        const container = document.getElementById('profile-badge-strip');
+        if (!container) return;
+        
+        try {
+            const badgesWithStatus = await this.badgeService.getAllBadgesWithUserStatus(this.currentUser.id);
+            const unlockedBadges = badgesWithStatus.filter(b => b.unlocked);
+            
+            // Sort by tier importance
+            const tierOrder = { legendary: 5, platinum: 4, gold: 3, silver: 2, bronze: 1 };
+            unlockedBadges.sort((a, b) => (tierOrder[b.tier] || 0) - (tierOrder[a.tier] || 0));
+            
+            // Take top 3
+            const topBadges = unlockedBadges.slice(0, 3);
+            
+            if (topBadges.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            container.innerHTML = topBadges.map(badge => `
+                <div class="badge-preview tier-${badge.tier}" title="${badge.name}">
+                    ${badge.icon}
+                    <div class="badge-tooltip">${badge.name} (${badge.tier})</div>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error('Error loading badge strip:', error);
+        }
+    }
+
+    updateSocialRow() {
+        const container = document.getElementById('profile-social-row');
+        if (!container) return;
+        
+        const links = [];
+        
+        if (this.profileData.website) {
+            links.push(`
+                <a href="${this.profileData.website}" target="_blank" class="social-icon-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
+                    Website
+                </a>
+            `);
+        }
+        
+        if (this.profileData.github_url) {
+            links.push(`
+                <a href="${this.profileData.github_url}" target="_blank" class="social-icon-link">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385c.6.105.825-.255.825-.57c0-.285-.015-1.23-.015-2.235c-3.015.555-3.795-.735-4.035-1.41c-.135-.345-.72-1.41-1.23-1.695c-.42-.225-1.02-.78-.015-.795c.945-.015 1.62.87 1.845 1.23c1.08 1.815 2.805 1.305 3.495.99c.105-.78.42-1.305.765-1.605c-2.67-.3-5.46-1.335-5.46-5.925c0-1.305.465-2.385 1.23-3.225c-.12-.3-.54-1.53.12-3.18c0 0 1.005-.315 3.3 1.23c.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23c.66 1.65.24 2.88.12 3.18c.765.84 1.23 1.905 1.23 3.225c0 4.605-2.805 5.625-5.475 5.925c.435.375.81 1.095.81 2.22c0 1.605-.015 2.895-.015 3.3c0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                    </svg>
+                    GitHub
+                </a>
+            `);
+        }
+        
+        if (this.profileData.twitter_url) {
+            links.push(`
+                <a href="${this.profileData.twitter_url}" target="_blank" class="social-icon-link">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/>
+                    </svg>
+                    Twitter
+                </a>
+            `);
+        }
+        
+        container.innerHTML = links.join('');
+        if (links.length === 0) {
+            container.style.display = 'none';
+        }
+    }
+
+    async loadFeaturedProject() {
+        const container = document.getElementById('featured-project-container');
+        if (!container) return;
+        
+        try {
+            const { data: posts, error } = await supabase
+                .from('posts')
+                .select('*')
+                .eq('user_id', this.currentUser.id)
+                .eq('type', 'project')
+                .order('clout', { ascending: false })
+                .limit(1);
+            
+            if (error) throw error;
+            
+            if (!posts || posts.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            const project = posts[0];
+            const tags = project.tags ? (Array.isArray(project.tags) ? project.tags : project.tags.split(',')) : [];
+            
+            container.innerHTML = `
+                <div class="featured-project-card">
+                    <div class="featured-label">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                        Featured Project
+                    </div>
+                    <div class="featured-project-content">
+                        <div class="featured-project-main">
+                            <h3 class="featured-project-title">${this.escapeHtml(project.title)}</h3>
+                            <p class="featured-project-description">${this.escapeHtml(project.description)}</p>
+                            ${tags.length > 0 ? `
+                                <div class="featured-project-tags">
+                                    ${tags.map(tag => `<span class="post-tag">${this.escapeHtml(tag.trim())}</span>`).join('')}
+                                </div>
+                            ` : ''}
+                            <div class="featured-project-meta">
+                                <span class="featured-project-clout">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                                    </svg>
+                                    ${project.clout || 0} clout
+                                </span>
+                                ${project.github_url ? `
+                                    <a href="${project.github_url}" target="_blank" style="color: var(--text-secondary); text-decoration: none;">
+                                        View on GitHub →
+                                    </a>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } catch (error) {
+            console.error('Error loading featured project:', error);
+            container.style.display = 'none';
+        }
+    }
+
+    setProjectFilter(filter) {
+        this.projectSort = filter;
+        
+        // Update active filter button
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.filter === filter);
+        });
+        
+        // Reload projects with new filter
+        const container = document.getElementById('user-posts-container');
+        if (container) {
+            this.loadUserProjects(container);
+        }
+    }
+
+    showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = `toast-notification ${type}`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.animation = 'slideOutDown 0.3s ease';
+            setTimeout(() => toast.remove(), 300);
+        }, 2000);
+    }
+
+    // Connections Modal Methods
+    async openConnectionsModal(type) {
+        const modal = document.getElementById('connections-modal');
+        const title = document.getElementById('connections-modal-title');
+        const list = document.getElementById('connections-list');
+        
+        title.textContent = type === 'followers' ? 'Followers' : 'Following';
+        list.innerHTML = '<div class="loading-state"><div class="loader-spinner"></div><p>Loading...</p></div>';
+        
+        modal.classList.add('show');
+        
+        try {
+            let data, error;
+            
+            if (type === 'followers') {
+                // Get followers
+                const result = await supabase
+                    .from('follows')
+                    .select(`
+                        follower_id,
+                        profiles!follows_follower_id_fkey (
+                            id,
+                            username,
+                            display_name,
+                            clout_score
+                        )
+                    `)
+                    .eq('following_id', this.currentUser.id);
+                
+                data = result.data;
+                error = result.error;
+            } else {
+                // Get following
+                const result = await supabase
+                    .from('follows')
+                    .select(`
+                        following_id,
+                        profiles!follows_following_id_fkey (
+                            id,
+                            username,
+                            display_name,
+                            clout_score
+                        )
+                    `)
+                    .eq('follower_id', this.currentUser.id);
+                
+                data = result.data;
+                error = result.error;
+            }
+            
+            if (error) throw error;
+            
+            if (!data || data.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No ${type} yet</h3>
+                        <p>${type === 'followers' ? 'No one is following you yet.' : 'You are not following anyone yet.'}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = data.map(item => {
+                const profile = type === 'followers' ? item.profiles : item.profiles;
+                if (!profile) return '';
+                
+                const initial = (profile.display_name || profile.username).charAt(0).toUpperCase();
+                
+                return `
+                    <div class="connection-item" data-user-id="${profile.id}">
+                        <div class="connection-avatar">${initial}</div>
+                        <div class="connection-info">
+                            <div class="connection-name">${profile.display_name || profile.username}</div>
+                            <div class="connection-username">@${profile.username}</div>
+                            <div class="connection-clout">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                                </svg>
+                                ${this.formatNumber(profile.clout_score || 0)} clout
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+        } catch (error) {
+            console.error(`Error loading ${type}:`, error);
+            list.innerHTML = `
+                <div class="empty-state">
+                    <h3>Error loading ${type}</h3>
+                    <p>${error.message}</p>
+                </div>
+            `;
+        }
+    }
+
+    closeConnectionsModal() {
+        document.getElementById('connections-modal').classList.remove('show');
+    }
+
+    // Achievements Timeline Methods
+    async loadAchievementsTimeline() {
+        try {
+            // Get user badges with unlock dates
+            const { data: userBadges, error } = await supabase
+                .from('user_badges')
+                .select(`
+                    unlocked_at,
+                    badges (
+                        id,
+                        name,
+                        description,
+                        icon,
+                        tier
+                    )
+                `)
+                .eq('user_id', this.currentUser.id)
+                .order('unlocked_at', { ascending: false });
+            
+            if (error) throw error;
+            
+            if (!userBadges || userBadges.length === 0) {
+                return;
+            }
+            
+            // Create timeline HTML
+            const timelineHTML = `
+                <div class="achievements-timeline">
+                    <div class="timeline-header">🏆 Achievement Timeline</div>
+                    ${userBadges.map(item => {
+                        const badge = item.badges;
+                        const date = new Date(item.unlocked_at);
+                        const dateStr = date.toLocaleDateString('en-US', { 
+                            month: 'short', 
+                            day: 'numeric', 
+                            year: 'numeric' 
+                        });
+                        
+                        return `
+                            <div class="timeline-item">
+                                <div class="timeline-icon tier-${badge.tier}">
+                                    ${badge.icon}
+                                </div>
+                                <div class="timeline-content">
+                                    <div class="timeline-badge-name">${badge.name}</div>
+                                    <div class="timeline-badge-tier tier-${badge.tier}">${badge.tier}</div>
+                                    <div class="timeline-badge-description">${badge.description}</div>
+                                    <div class="timeline-date">${dateStr}</div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+            
+            // Insert timeline after badges grid
+            const badgesContainer = document.getElementById('badges-container');
+            if (badgesContainer && badgesContainer.parentNode) {
+                const existingTimeline = badgesContainer.parentNode.querySelector('.achievements-timeline');
+                if (existingTimeline) {
+                    existingTimeline.remove();
+                }
+                badgesContainer.insertAdjacentHTML('afterend', timelineHTML);
+            }
+            
+        } catch (error) {
+            console.error('Error loading achievements timeline:', error);
         }
     }
 

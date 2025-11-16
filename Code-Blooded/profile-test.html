@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Test Mode (No Auth)</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/cursor-effects.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/profile.css">
+</head>
+<body>
+    <!-- Cursor elements -->
+    <div class="spotlight"></div>
+
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-left">
+            <div class="logo">
+                <span class="logo-text">CodeBlooded</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="create-btn" onclick="alert('Test Mode - No Backend')">Test Button</button>
+        </div>
+    </header>
+
+    <!-- Profile Layout -->
+    <div class="dashboard-container">
+        <!-- Left Sidebar -->
+        <aside class="left-sidebar">
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="profile-test.html" class="nav-item active">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    My Profile (Test)
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Profile Content -->
+        <main class="profile-main">
+            <!-- Profile Header -->
+            <div class="profile-header glass">
+                <div class="profile-avatar-section">
+                    <div class="profile-avatar">
+                        <div class="avatar-xxl" id="profile-avatar">T</div>
+                        <div class="online-status"></div>
+                    </div>
+                    <div class="profile-actions">
+                        <button class="edit-profile-btn" id="edit-profile-btn">Edit Profile</button>
+                    </div>
+                </div>
+
+                <div class="profile-info-section">
+                    <div class="profile-main-info">
+                        <h1 class="profile-display-name">Test User</h1>
+                        <span class="profile-username">@testuser</span>
+                        <span class="profile-title">Code Newbie</span>
+                        <p class="profile-bio">This is test mode - no backend required!</p>
+                        <div class="profile-meta">
+                            <span class="profile-location">Test City</span>
+                            <span class="profile-join-date">Joined January 2024</span>
+                        </div>
+                    </div>
+
+                    <div class="profile-stats-overview">
+                        <div class="profile-stat">
+                            <span class="stat-number">0</span>
+                            <span class="stat-label">Followers</span>
+                        </div>
+                        <div class="profile-stat">
+                            <span class="stat-number">0</span>
+                            <span class="stat-label">Following</span>
+                        </div>
+                        <div class="profile-stat">
+                            <span class="stat-number">0</span>
+                            <span class="stat-label">Projects</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card glass">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-main">
+                        <span class="stat-value">0</span>
+                        <span class="stat-label">Total Stars</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card glass">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-main">
+                        <span class="stat-value">0</span>
+                        <span class="stat-label">Clout Points</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card glass">
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-main">
+                        <span class="stat-value">#--</span>
+                        <span class="stat-label">Global Rank</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="right-sidebar">
+            <div class="sidebar-card">
+                <h3 class="card-title">Tech Stack</h3>
+                <div class="tech-stack-tags" id="tech-stack-tags">
+                    <span class="tech-tag">JavaScript</span>
+                    <span class="tech-tag">React</span>
+                    <span class="tech-tag">Node.js</span>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal" id="edit-profile-modal">
+        <div class="modal-overlay" id="edit-modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Profile (Test Mode)</h2>
+                <button class="modal-close" id="edit-modal-close">×</button>
+            </div>
+            <form class="edit-profile-form" id="edit-profile-form">
+                <div class="form-section">
+                    <label>Display Name</label>
+                    <input type="text" id="edit-display-name" class="auth-input" placeholder="Your display name" value="Test User">
+                </div>
+
+                <div class="form-section">
+                    <label>Bio</label>
+                    <textarea id="edit-bio" class="auth-input" rows="3" placeholder="Tell us about yourself..." maxlength="160">Testing the tech stack feature!</textarea>
+                    <div class="char-count"><span id="bio-char-count">30</span>/160</div>
+                </div>
+
+                <div class="form-section">
+                    <label>Tech Stack (Max 15 tags)</label>
+                    <div class="tech-stack-input">
+                        <div class="selected-tech-tags" id="selected-tech-tags">
+                            <!-- Tags will appear here -->
+                        </div>
+                        <input type="text" id="tech-input" class="auth-input" placeholder="Search technologies... (e.g., React, Python, Docker)">
+                        <div class="tech-suggestions" id="tech-suggestions" style="display: none;"></div>
+                    </div>
+                    <small style="color: var(--text-secondary); margin-top: 8px; display: block;">
+                        💡 Start typing to search from 150+ technologies
+                    </small>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" id="cancel-edit-btn">Cancel</button>
+                    <button type="submit" class="auth-button">Save Changes (Test)</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/cursor-effects.js"></script>
+    <script>
+        // Test Mode - No Supabase Required
+        console.log('🧪 TEST MODE: Profile page without authentication');
+
+        // Tech stack functionality
+        const commonTech = [
+            'JavaScript', 'TypeScript', 'Python', 'Java', 'C#', 'C++', 'C', 'PHP', 'Ruby', 'Go', 
+            'Rust', 'Swift', 'Kotlin', 'React', 'Vue.js', 'Angular', 'Svelte', 'Next.js', 
+            'Node.js', 'Express', 'Django', 'Flask', 'MongoDB', 'PostgreSQL', 'MySQL', 'Redis',
+            'Docker', 'Kubernetes', 'AWS', 'Azure', 'TensorFlow', 'PyTorch', 'Git', 'GitHub'
+        ].sort();
+
+        const MAX_TAGS = 15;
+        let selectedTags = ['JavaScript', 'React', 'Node.js']; // Pre-populate for testing
+
+        // Modal controls
+        const modal = document.getElementById('edit-profile-modal');
+        const openBtn = document.getElementById('edit-profile-btn');
+        const closeBtn = document.getElementById('edit-modal-close');
+        const overlay = document.getElementById('edit-modal-overlay');
+        const cancelBtn = document.getElementById('cancel-edit-btn');
+        const form = document.getElementById('edit-profile-form');
+        const techInput = document.getElementById('tech-input');
+        const suggestions = document.getElementById('tech-suggestions');
+        const selectedTagsContainer = document.getElementById('selected-tech-tags');
+
+        // Open modal
+        openBtn.addEventListener('click', () => {
+            modal.classList.add('show');
+            renderSelectedTags();
+        });
+
+        // Close modal
+        [closeBtn, overlay, cancelBtn].forEach(el => {
+            el.addEventListener('click', () => modal.classList.remove('show'));
+        });
+
+        // Tech stack search
+        techInput.addEventListener('input', (e) => {
+            const value = e.target.value.toLowerCase();
+            
+            if (selectedTags.length >= MAX_TAGS) {
+                suggestions.innerHTML = `<div style="padding: 12px; color: #ff6b6b;">Maximum ${MAX_TAGS} tags reached</div>`;
+                suggestions.style.display = 'block';
+                return;
+            }
+            
+            if (value.length < 1) {
+                suggestions.style.display = 'none';
+                return;
+            }
+
+            const filtered = commonTech.filter(tech => 
+                tech.toLowerCase().includes(value) &&
+                !selectedTags.includes(tech)
+            ).slice(0, 10);
+
+            if (filtered.length > 0) {
+                suggestions.innerHTML = filtered.map(tech => 
+                    `<div class="tech-suggestion" data-tech="${tech}" style="padding: 8px 12px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.1);">${tech}</div>`
+                ).join('');
+                suggestions.style.display = 'block';
+            } else {
+                suggestions.innerHTML = '<div style="padding: 12px; color: var(--text-secondary);">No matching technologies found</div>';
+                suggestions.style.display = 'block';
+            }
+        });
+
+        // Click suggestion
+        suggestions.addEventListener('click', (e) => {
+            if (e.target.classList.contains('tech-suggestion')) {
+                const tech = e.target.dataset.tech;
+                if (selectedTags.length < MAX_TAGS && !selectedTags.includes(tech)) {
+                    selectedTags.push(tech);
+                    renderSelectedTags();
+                    techInput.value = '';
+                    suggestions.style.display = 'none';
+                }
+            }
+        });
+
+        // Render selected tags
+        function renderSelectedTags() {
+            selectedTagsContainer.innerHTML = selectedTags.map(tech => `
+                <span class="tech-tag-input" style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; background: rgba(255,255,255,0.1); border-radius: 6px; margin: 4px;">
+                    ${tech}
+                    <button type="button" class="remove-tag" data-tech="${tech}" style="background: none; border: none; color: var(--text-primary); cursor: pointer; font-size: 18px; line-height: 1;">×</button>
+                </span>
+            `).join('');
+
+            // Add remove listeners
+            document.querySelectorAll('.remove-tag').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const tech = e.target.dataset.tech;
+                    selectedTags = selectedTags.filter(t => t !== tech);
+                    renderSelectedTags();
+                });
+            });
+        }
+
+        // Form submit
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert(`✅ Test Mode: Would save ${selectedTags.length} tags:\n\n${selectedTags.join(', ')}`);
+            console.log('Selected tags:', selectedTags);
+            modal.classList.remove('show');
+        });
+
+        // Bio character count
+        document.getElementById('edit-bio').addEventListener('input', (e) => {
+            document.getElementById('bio-char-count').textContent = e.target.value.length;
+        });
+
+        // Initial render
+        renderSelectedTags();
+
+        console.log('✅ Test mode ready! Click "Edit Profile" to test the tech stack feature.');
+    </script>
+</body>
+</html>
